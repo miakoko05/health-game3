@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>健康知識小測驗</title>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2196F3;
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        #quiz-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        h1 { color: var(--primary-color); margin-bottom: 1.5rem; }
+
+        .question { font-size: 1.2rem; margin-bottom: 1.5rem; font-weight: bold; }
+
+        .options { display: flex; flex-direction: column; gap: 10px; }
+
+        button {
+            padding: 12px;
+            font-size: 1rem;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover { background-color: #e8f5e9; border-color: var(--primary-color); }
+
+        .hidden { display: none; }
+
+        #score-display { font-size: 1.5rem; color: var(--secondary-color); font-weight: bold; }
+
+        .progress {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div id="quiz-container">
+    <div id="quiz-ui">
+        <div class="progress">問題 <span id="current-idx">1</span> / <span id="total-questions"></span></div>
+        <div class="question" id="question-text">載入中...</div>
+        <div class="options" id="options-container"></div>
+    </div>
+
+    <div id="result-ui" class="hidden">
+        <h2>測驗結束！</h2>
+        <p>你的得分是：</p>
+        <div id="score-display">0</div>
+        <button onclick="location.reload()" style="margin-top: 20px; background: var(--primary-color); color: white; border: none;">重新挑戰</button>
+    </div>
+</div>
+
+<script>
+    const quizData = [
+        {
+            q: "成人每日建議飲水量（毫升）大約是體重(kg)乘以多少？",
+            a: ["20", "30", "50", "10"],
+            correct: 1
+        },
+        {
+            q: "下列哪種維生素與鈣質吸收密切相關？",
+            a: ["維生素 A", "維生素 B12", "維生素 C", "維生素 D"],
+            correct: 3
+        },
+        {
+            q: "正常的成年人靜止心率通常落在每分鐘幾次？",
+            a: ["40-60次", "60-100次", "100-120次", "120-150次"],
+            correct: 1
+        },
+        {
+            q: "為了維持心血管健康，每週建議進行至少幾分鐘的中等強度運動？",
+            a: ["30分鐘", "60分鐘", "150分鐘", "300分鐘"],
+            correct: 2
+        }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    const questionEl = document.getElementById('question-text');
+    const optionsEl = document.getElementById('options-container');
+    const currentIdxEl = document.getElementById('current-idx');
+    const totalQuestionsEl = document.getElementById('total-questions');
+    const quizUI = document.getElementById('quiz-ui');
+    const resultUI = document.getElementById('result-ui');
+    const scoreDisplay = document.getElementById('score-display');
+
+    function initQuiz() {
+        totalQuestionsEl.innerText = quizData.length;
+        showQuestion();
+    }
+
+    function showQuestion() {
+        const data = quizData[currentQuestion];
+        questionEl.innerText = data.q;
+        currentIdxEl.innerText = currentQuestion + 1;
+        optionsEl.innerHTML = '';
+
+        data.a.forEach((option, index) => {
+            const btn = document.createElement('button');
+            btn.innerText = option;
+            btn.onclick = () => checkAnswer(index);
+            optionsEl.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selected) {
+        if (selected === quizData[currentQuestion].correct) {
+            score += 25;
+        }
+
+        currentQuestion++;
+        if (currentQuestion < quizData.length) {
+            showQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        quizUI.classList.add('hidden');
+        resultUI.classList.remove('hidden');
+        scoreDisplay.innerText = score + " / 100 分";
+    }
+
+    initQuiz();
+</script>
+
+</body>
+</html>
